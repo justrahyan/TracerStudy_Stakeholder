@@ -1,0 +1,97 @@
+:root {
+  --primary: #01639a;
+  --dark-blue: #033562;
+  --orange: #ff9933;
+}
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+body {
+  background-color: #f5f5f5;
+}
+main {
+  width: 82%;
+  position: fixed;
+  top: 0;
+  right: 0;
+}
+header {
+  background-color: var(--primary);
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: left 0.35s ease-in-out;
+}
+.dashboard-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+.user-info {
+  display: flex;
+  gap: 0.5rem;
+  color: #fff;
+}
+.role {
+  font-size: 0.85rem;
+}
+/* Main Content */
+.main-content {
+  padding: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: flex-start;
+}
+/* Tabel */
+.main-content table {
+  width: 100%;
+  border-spacing: 0 10px;
+  border-collapse: separate;
+}
+.main-content table tr.data {
+  box-shadow: rgba(149, 157, 165, 0.15) 0px 5px 10px;
+  height: 60px;
+}
+.main-content table tr:first-child th {
+  padding: 0.5rem 1.25rem 1.25rem;
+}
+.main-content table .text-truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.main-content table tr:not(:first-child) td {
+  padding: 0.5rem 1.25rem;
+}
+.main-content table .btn-detail {
+  background-color: var(--btn-detail);
+  border: none;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.main-content table .btn-detail img {
+  width: 24px;
+  height: 24px;
+}
+.main-content table .btn-delete {
+  background-color: var(--btn-delete);
+  border: none;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.main-content table .btn-delete img {
+  width: 24px;
+  height: 24px;
+}

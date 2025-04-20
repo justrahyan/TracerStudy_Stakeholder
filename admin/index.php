@@ -1,3 +1,16 @@
+<?php
+  session_start();
+  ob_start();
+  if (isset($_SESSION['userweb'])) {
+      include '../koneksi.php';
+
+      // Ambil id_user dari session
+      $id_user = $_SESSION['id_user'];
+  } else {
+      header("location:../login.php");
+      exit();
+  }
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,58 +35,64 @@
 </head>
 
 <body>
-    <aside>
-        <div class="container">
-            <div class="logo mb-4">
-                <a href="index.php">
-                    <img src="../assets/img/Logo-PPSUNM.png" alt="Logo">
-                </a>
-            </div>
-            <ul>
-                <li class="w-100 py-2 px-3 rounded active">
-                    <a href="index.php" class="text-dark text-decoration-none fw-medium">
-                        <img src="../assets/img/icon/home-primary.png" alt="Dashboard">
-                        Dashboard
-                    </a>
-                </li>
-                <li class="w-100 py-2 px-3 rounded my-3">
-                    <a href="data-stakeholder.php" class="text-secondary text-decoration-none fw-medium">
-                        <img src="../assets/img/icon/users-secondary.png" alt="Data Stakeholder">
-                        Data Stakeholder
-                    </a>
-                </li>
-                <li class="w-100 py-2 px-3 rounded">
-                    <a href="data-penilaian.php" class="text-secondary text-decoration-none fw-medium">
-                        <img src="../assets/img/icon/file-secondary.png" alt="Data Penilaian">
-                        Data Penilaian
-                    </a>
-                </li>
-            </ul>
-            <ul class="mt-auto">
-                <li class="w-100 py-2 px-3 rounded">
-                    <a href="../login.php" class="text-secondary text-decoration-none fw-medium">
-                        <img src="../assets/img/icon/log-out.png" alt="Data Penilaian">
-                        Keluar
-                    </a>
-                </li>
-            </ul>
-    </aside>
+    <?php
+        include('partials/sidebar.php');
+    ?>
+
+    <!-- Hamburger Button -->
 
     <main>
         <div class="main-container">
             <header class="d-flex align-items-center justify-content-between px-4">
-                <h6 class="text-white mb-0">Dashboard</h6>
+                <div class="d-flex align-items-center flex-row gap-3">
+                    <div class="hamburger" id="hamburger">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <h6 class="text-white mb-0 dashboard-title ">Dashboard</h6>
+                </div>
                 <div class="d-flex flex-row align-items-center gap-2">
-                    <div class="d-flex flex-column align-items-end text-white">
+                    <div class="d-flex flex-column align-items-end text-white user-info">
                         <h6 class="mb-0 fw-medium">Admin</h6>
                         <p class="role mb-0">Admin</p>
                     </div>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24"><path fill="#ffffff" d="M12 3a9 9 0 0 0-9 9a8.96 8.96 0 0 0 1.773 5.365A5 5 0 0 1 9.5 14h5a5 5 0 0 1 4.727 3.365A8.96 8.96 0 0 0 21 12a9 9 0 0 0-9-9m5.5 16.125V19a3 3 0 0 0-3-3h-5a3 3 0 0 0-3 3v.125A8.96 8.96 0 0 0 12 21c2.072 0 3.979-.7 5.5-1.875M1 12C1 5.925 5.925 1 12 1s11 4.925 11 11a10.98 10.98 0 0 1-3.85 8.36A10.96 10.96 0 0 1 12 23a10.96 10.96 0 0 1-7.15-2.64A10.98 10.98 0 0 1 1 12m11-6a2.5 2.5 0 1 0 0 5a2.5 2.5 0 0 0 0-5M7.5 8.5a4.5 4.5 0 1 1 9 0a4.5 4.5 0 0 1-9 0"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="d-none d-md-block" width="40" height="40" viewBox="0 0 24 24"><path fill="#ffffff" d="M12 3a9 9 0 0 0-9 9a8.96 8.96 0 0 0 1.773 5.365A5 5 0 0 1 9.5 14h5a5 5 0 0 1 4.727 3.365A8.96 8.96 0 0 0 21 12a9 9 0 0 0-9-9m5.5 16.125V19a3 3 0 0 0-3-3h-5a3 3 0 0 0-3 3v.125A8.96 8.96 0 0 0 12 21c2.072 0 3.979-.7 5.5-1.875M1 12C1 5.925 5.925 1 12 1s11 4.925 11 11a10.98 10.98 0 0 1-3.85 8.36A10.96 10.96 0 0 1 12 23a10.96 10.96 0 0 1-7.15-2.64A10.98 10.98 0 0 1 1 12m11-6a2.5 2.5 0 1 0 0 5a2.5 2.5 0 0 0 0-5M7.5 8.5a4.5 4.5 0 1 1 9 0a4.5 4.5 0 0 1-9 0"/></svg>
                 </div>
             </header>
+            <div class="main-content d-flex">
+                <a href="data-stakeholder.php" class="card d-flex flex-row justify-content-between align-items-center p-4">
+                    <div class="info">
+                        <div class="title">
+                            <p>STAKEHOLDER</p>
+                        </div>
+                        <div class="count">
+                            <h1 class="fw-bold">2</h1>
+                        </div>
+                    </div>
+                    <div class="icon">
+                        <img src="../assets/img/icon/users-primary.png" alt="">
+                    </div>
+                </a>
+                <a href="data-penilaian.php" class="card d-flex flex-row justify-content-between align-items-center p-4">
+                    <div class="info">
+                        <div class="title">
+                            <p>PENILAIAN</p>
+                        </div>
+                        <div class="count">
+                            <h1 class="fw-bold">7</h1>
+                        </div>
+                    </div>
+                    <div class="icon">
+                        <img src="../assets/img/icon/file-primary.png" alt="">
+                    </div>
+                </a>
+            </div>
         </div>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Main JS -->
+    <script src="./assets/js/script.js"></script>
 </body>
 </html>

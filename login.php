@@ -55,6 +55,7 @@
             if ($role == 'admin') {
                 $_SESSION['userweb'] = $username;
                 $_SESSION['role'] = 'admin';
+                $_SESSION['id_user'] = $user['id'];
                 header("location:admin/index.php");
             }
         } else {

@@ -1,6 +1,7 @@
 :root {
   --primary: #01639a;
   --dark-blue: #033562;
+  --orange: #ff9933;
 }
 * {
   padding: 0;
@@ -20,7 +21,71 @@ main {
 header {
   background-color: var(--primary);
   height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: left 0.35s ease-in-out;
+}
+.dashboard-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+.user-info {
+  display: flex;
+  gap: 0.5rem;
+  color: #fff;
 }
 .role {
   font-size: 0.85rem;
+}
+/* Main Content */
+.main-content {
+  padding: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: flex-start;
+}
+.card {
+  width: 300px;
+  border: none;
+  color: #01639a;
+  background-color: var(--orange);
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+.card h1 {
+  font-size: 3rem;
+  margin-bottom: 0;
+  line-height: 1;
+}
+.card img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+}
+@media (max-width: 576px) {
+  .main-content {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .card {
+    width: 100%;
+    flex-direction: row;
+    padding: 1rem 1.5rem;
+  }
+
+  .card h1 {
+    font-size: 2rem;
+  }
+
+  .card .title p {
+    font-size: 0.9rem;
+  }
+
+  .card img {
+    width: 40px;
+    height: 40px;
+  }
 }
