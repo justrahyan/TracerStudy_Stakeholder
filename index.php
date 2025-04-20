@@ -13,8 +13,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!-- favicon -->
     <link rel="apple-touch-icon" sizes="180x180" href="assets/img/favicon_io/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon_io/favicon-32x32.png">
@@ -25,14 +23,40 @@
 <body>
     <header>
         <div class="box-container py-3 py-lg-4">
-            <nav class="d-flex flex-row justify-content-between align-items-center">
-                <div class="logo d-flex align-items-center gap-3">
-                    <img src="assets/img/logo-unm-putih.png" alt="Logo UNM" height="50px">
-                    <p class="text-white mb-0 fw-medium">TRACER STUDY STAKEHOLDER<br>PROGRAM STUDI S2 PEP</p>
+            <nav class="navbar navbar-expand-md">
+                <div class="container-fluid p-0">
+                    <!-- Brand -->
+                    <div class="navbar-brand d-flex align-items-center gap-3">
+                        <img src="assets/img/logo-unm-putih.png" alt="Logo UNM" height="50px">
+                        <p class="text-white mb-0 fw-medium">
+                            TRACER STUDY STAKEHOLDER<br>PROGRAM STUDI S2 PEP
+                        </p>
+                    </div>
+                    
+
+                    <!-- Hamburger Offcanvas Toggle -->
+                    <button class="navbar-toggler text-white border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <!-- Offcanvas Menu -->
+                    <div class="offcanvas offcanvas-end offcanvas-half text-dark" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+                        <div class="offcanvas-header">
+                            <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu</h5>
+                            <button type="button" class="btn-close btn-close-dark" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                        </div>
+                        <div class="offcanvas-body">
+                            <ul class="navbar-nav ms-auto">
+                                <a href="login.php" class="ms-auto text-white text-decoration-none d-none d-md-block">Login</a>
+                                <li class="nav-item d-md-none">
+                                    <a href="login.php" class="nav-link text-dark">Login</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-                <a href="login.php" class="text-white text-decoration-none">Login</a>
             </nav>
-            <div class="text-center text-white pt-4 pt-md-0">
+            <div class="text-center text-white pt-2 pt-md-0">
                 <h1 class="fw-bold">Tracer Study</h1>
                 <p>Stakeholder Program Studi S2 Penelitian dan Evaluasi Pendidikan<br>Universitas Negeri Makassar</p>
             </div>
@@ -137,5 +161,7 @@
         </div>
         <input type="submit" value="Kirim" class="w-100 btn-submit text-white">
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

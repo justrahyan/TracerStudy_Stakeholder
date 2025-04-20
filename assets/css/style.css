@@ -22,7 +22,9 @@ header {
   background-repeat: no-repeat;
   height: 300px;
 }
-
+.navbar-brand p {
+  font-size: 1rem;
+}
 input {
   margin: 0.5rem 0;
   width: 20rem;
@@ -39,18 +41,24 @@ input {
 .btn-submit {
   background-color: var(--dark-blue);
 }
-/* === Responsif max-width: 992px === */
-@media (max-width: 992px) {
+.offcanvas-half {
+  width: 50% !important; /* Setengah layar */
+}
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='white' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+@media screen and (max-width: 992px) {
   header {
     height: 250px;
-    padding: 2rem 0;
+    padding: 1rem 0;
   }
 
-  .logo img {
+  .navbar-brand img {
     height: 40px;
   }
 
-  .logo p,
+  .navbar-brand p,
   header a {
     font-size: 0.9rem;
   }
@@ -95,12 +103,7 @@ input {
   }
 }
 
-/* === Responsif max-width: 768px === */
-@media (max-width: 768px) {
-  header {
-    padding: 1rem 0;
-  }
-
+@media screen and (max-width: 768px) {
   header h1 {
     font-size: 1.75rem;
   }
@@ -109,20 +112,25 @@ input {
     font-size: 0.875rem;
   }
 
-  .logo p,
+  .navbar-brand img {
+    height: 35px;
+  }
+
+  .navbar-brand p,
   header a {
     font-size: 0.75rem;
   }
 }
 
-/* === Responsif max-width: 576px === */
-@media (max-width: 576px) {
+@media screen and (max-width: 576px) {
   h1,
   header h1 {
     font-size: 1.5rem;
   }
-
-  .logo p {
+  .offcanvas-half {
+    width: 80% !important; /* Supaya lebih nyaman di layar kecil */
+  }
+  .navbar-brand p {
     font-size: 0.8rem;
   }
 
@@ -142,13 +150,12 @@ input {
   }
 }
 
-/* === Responsif max-width: 480px === */
-@media (max-width: 480px) {
-  .logo img {
+@media screen and (max-width: 480px) {
+  .navbar-brand img {
     height: 35px;
   }
 
-  .logo p {
+  .navbar-brand p {
     font-size: 0.75rem;
   }
 
