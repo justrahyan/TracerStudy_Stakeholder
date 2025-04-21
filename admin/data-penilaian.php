@@ -174,21 +174,21 @@
                 <div class="modal-body">
                     <div class="d-flex flex-column gap-2">
                         <label for="pertanyaan1">Pertanyaan 1</label>
-                        <input type="text" name="pertanyaan1" value="1 (Kurang Baik)" class="form-control" disabled>
+                        <input type="text" name="pertanyaan1" value="Kurang Baik" class="form-control" disabled>
                         <label for="pertanyaan2">Pertanyaan 2</label>
-                        <input type="text" name="pertanyaan2" value="1 (Kurang Baik)" class="form-control" disabled>
+                        <input type="text" name="pertanyaan2" value="Kurang Baik" class="form-control" disabled>
                         <label for="pertanyaan3">Pertanyaan 3</label>
-                        <input type="text" name="pertanyaan3" value="1 (Kurang Baik)" class="form-control" disabled>
+                        <input type="text" name="pertanyaan3" value="Kurang Baik" class="form-control" disabled>
                         <label for="pertanyaan4">Pertanyaan 4</label>
-                        <input type="text" name="pertanyaan4" value="1 (Kurang Baik)" class="form-control" disabled>
+                        <input type="text" name="pertanyaan4" value="Kurang Baik" class="form-control" disabled>
                         <label for="pertanyaan5">Pertanyaan 5</label>
-                        <input type="text" name="pertanyaan5" value="1 (Kurang Baik)" class="form-control" disabled>
+                        <input type="text" name="pertanyaan5" value="Cukup" class="form-control" disabled>
                         <label for="pertanyaan6">Pertanyaan 6</label>
-                        <input type="text" name="pertanyaan6" value="1 (Kurang Baik)" class="form-control" disabled>
+                        <input type="text" name="pertanyaan6" value="Kurang Baik" class="form-control" disabled>
                         <label for="pertanyaan7">Pertanyaan 7</label>
-                        <input type="text" name="pertanyaan7" value="1 (Kurang Baik)" class="form-control" disabled>
+                        <input type="text" name="pertanyaan7" value="Baik" class="form-control" disabled>
                         <label for="rata2nilai">Rata-Rata Nilai</label>
-                        <input type="text" name="rata2nilai" value="1 (Kurang Baik)" class="form-control" disabled>
+                        <input type="text" name="rata2nilai" value="Kurang Baik" class="form-control" disabled>
                     </div>
                 </div>
             </div>
