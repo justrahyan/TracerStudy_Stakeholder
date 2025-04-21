@@ -3,7 +3,7 @@ aside {
   box-shadow: rgba(149, 157, 165, 0.3) 0px 0px 24px;
   width: 18%;
   min-width: 18%;
-  z-index: 2000;
+  z-index: 1000;
   background-color: white;
   transition: left 0.35s ease-in-out;
   height: 100vh;
@@ -65,7 +65,7 @@ aside .container ul li:hover {
   height: 1.25rem;
   flex-direction: column;
   justify-content: space-between;
-  z-index: 2001;
+  z-index: 1001;
   cursor: pointer;
 }
 .hamburger span {
@@ -82,6 +82,16 @@ aside .container ul li:hover {
   cursor: pointer;
   display: none;
 }
+
+@media screen and (min-width: 901px) and (max-width: 1407px) {
+  aside {
+    width: 24%;
+  }
+  main {
+    width: 76%;
+  }
+}
+
 /* Responsive Styles */
 @media (max-width: 900px) {
   aside {
@@ -89,7 +99,7 @@ aside .container ul li:hover {
     width: 70vw;
     min-width: 0;
     transition: left 0.35s;
-    z-index: 2000;
+    z-index: 1000;
   }
   aside.open {
     left: 0;
@@ -99,7 +109,7 @@ aside .container ul li:hover {
   }
   .hamburger {
     display: flex;
-    z-index: 1000;
+    z-index: 999;
   }
   main {
     width: 100vw;
@@ -124,4 +134,36 @@ aside .container ul li:hover {
 }
 .overlay.active {
   display: block;
+}
+
+.logout-icon {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.logout-icon .circle {
+  border-radius: 50%;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.logout-icon .outer {
+  width: 70px;
+  height: 70px;
+  background-color: #ecf6fb;
+  z-index: 1;
+}
+
+.logout-icon .middle {
+  width: 55px;
+  height: 55px;
+  background-color: #d5e7f1;
+  z-index: 2;
+}
+
+.logout-icon .inner {
+  z-index: 3;
 }
