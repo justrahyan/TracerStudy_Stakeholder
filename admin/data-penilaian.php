@@ -100,6 +100,7 @@
                             <th scope="col">Alumni (Nama + Tahun Lulusan)</th>
                             <th scope="col">Rata-Rata Nilai</th>
                             <th scope="col">Detail Nilai</th>
+                            <th scope="col">Harapan</th>
                             <th scope="col">Saran dan Masukan</th>
                             <th scope="col">Aksi</th>
                         </tr>
@@ -135,6 +136,11 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><g fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 12a3 3 0 1 1-6 0a3 3 0 0 1 6 0"/><path d="M2 12c1.6-4.097 5.336-7 10-7s8.4 2.903 10 7c-1.6 4.097-5.336 7-10 7s-8.4-2.903-10-7"/></g></svg>
                                     </a>
                                 </div>
+                            </td>
+                            <td
+                            scope="col"
+                            >
+                                Semoga Lebih Terampil dan Sukses
                             </td>
                             <td
                             scope="col"
@@ -188,7 +194,7 @@
                         <label for="pertanyaan7">Pertanyaan 7</label>
                         <input type="text" name="pertanyaan7" value="Baik" class="form-control" disabled>
                         <label for="rata2nilai">Rata-Rata Nilai</label>
-                        <input type="text" name="rata2nilai" value="Kurang Baik" class="form-control" disabled>
+                        <input type="text" name="rata2nilai" value="1.2" class="form-control" disabled>
                     </div>
                 </div>
             </div>
