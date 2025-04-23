@@ -10,6 +10,10 @@
       header("location:../login.php");
       exit();
   }
+  $startDateGenerate = $_GET['startDateGenerate'] ?? '';
+  $endDateGenerate = $_GET['endDateGenerate'] ?? '';
+  $tglPenilaian = $_GET['tglPenilaian'] ?? '';
+  $formatGenerate = $_GET['format'] ?? '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -71,7 +75,7 @@
                                 </path>
                                 </svg>
                             </div>
-                            <form action="" method="GET" id="searchForm">
+                            <form action="" method="GET" id="searchForm" autocomplete="off">
                                 <input type="search" name="search" placeholder="Cari" 
                                 class="form-control ps-5 py-2 border rounded w-100 w-lg-50 border-dark-subtle" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
                             </form>
@@ -92,7 +96,7 @@
                     </div>
                 </div>
                 <hr>
-                <div style="overflow-x: auto;">
+                <div style="overflow-x: auto;" class="mb-5 mb-lg-3">
                     <table>
                         <tr class="head">
                             <th scope="col">Tanggal</th>
@@ -104,34 +108,84 @@
                             <th scope="col">Saran dan Masukan</th>
                             <th scope="col">Aksi</th>
                         </tr>
+                        <?php
+                            $search = isset($_GET['search']) ? mysqli_real_escape_string($koneksi, $_GET['search']) : '';
+                            $startDate = isset($_GET['startDate']) ? $_GET['startDate'] : '';
+                            $endDate = isset($_GET['endDate']) ? $_GET['endDate'] : '';
+                            $tahun_lulus = isset($_GET['tahun_lulus']) ? $_GET['tahun_lulus'] : '';
+
+                            // Pagination
+                            $per_page = 15;
+                            $current_page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+                            $offset = ($current_page - 1) * $per_page;
+
+                            
+                            $query = "SELECT * FROM tb_penilaianstakeholder WHERE 1 ORDER BY id DESC";
+                            
+                            if (!empty($startDate) && !empty($endDate)) {
+                                $query .= " AND tanggal BETWEEN '$startDate' AND '$endDate'";
+                            }
+                            
+                            if (!empty($tahun_lulus)) {
+                                $query .= " AND tahun_lulus = '$tahun_lulus'";
+                            }
+
+                            if (!empty($search)) {
+                                $query .= " AND (
+                                    nama_stakeholder LIKE '%$search%' OR
+                                    nama_alumni LIKE '%$search%'
+                                )";
+                            }
+
+                            $query_string = http_build_query([
+                                'startDate' => $startDate,
+                                'endDate' => $endDate,
+                                'tahun_lulus' => $tahun_lulus
+                            ]);
+
+                            $query .= " LIMIT $per_page OFFSET $offset";
+                            $result = mysqli_query($koneksi, $query);
+                            
+                            $count_query = "SELECT COUNT(*) as total FROM tb_penilaianstakeholder";
+                            $count_result = mysqli_query($koneksi, $count_query);
+                            $count_row = mysqli_fetch_assoc($count_result);
+                            $total_data = $count_row['total'];
+
+                            // Menghitung jumlah halaman
+                            $total_pages = ceil($total_data / $per_page);
+
+                            $no = 1;
+                            if(mysqli_num_rows($result) > 0) {
+                                while($row = mysqli_fetch_assoc($result)) {
+                                    $total_nilai = $row['pertanyaan_1'] + $row['pertanyaan_2'] + $row['pertanyaan_3'] + $row['pertanyaan_4'] + $row['pertanyaan_5'] + $row['pertanyaan_6'] + $row['pertanyaan_7'];
+                                    $rata_rata = round($total_nilai / 7, 2);
+                        ?>
                         <tr class="data rounded">
-                            <!-- <td class="d-none user_id"><?php echo $row['user_id'];?></td>
-                            <td class="d-none id_task"><?php echo $row['id'];?></td> -->
-                            <td scope="col">23/03/2024</td>
+                            <td class="d-none id"><?php echo $row['id'];?></td>
+                            <td scope="col"><?php echo $row['tanggal'] ?></td>
                             <td
                             scope="col"
                             class="text-truncate"
                             style="max-width: 200px"
                             >
-                                Muhammad Akhsan Awaluddin
+                                <?php echo $row['nama_stakeholder'] ?>
                             </td>
                             <td scope="col" class="text-truncate" style="max-width: 200px;">
-                                Ival Permana (2026)
+                                <?php echo $row['nama_alumni'] ?> (<?php echo $row['tahun_lulus'] ?>)
                             </td>
                             <td
                             scope="col"
                             class="text-truncate"
                             style="max-width: 200px"
                             >
-                                1.2
+                                <?php echo $rata_rata ?>
                             </td>
                             <td
                             scope="col"
                             >
                                 <div class="d-flex flex-row align-items-center">
-                                    <a 
-                                        class="btn btn-detail view-detail p-0" 
-                                        data-bs-toggle="modal" data-bs-target="#detailModal"
+                                    <a href="?detail_id=<?= $row['id'] ?>&<?= $query_string ?>"
+                                        class="btn btn-detail view-detail p-0"
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><g fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 12a3 3 0 1 1-6 0a3 3 0 0 1 6 0"/><path d="M2 12c1.6-4.097 5.336-7 10-7s8.4 2.903 10 7c-1.6 4.097-5.336 7-10 7s-8.4-2.903-10-7"/></g></svg>
                                     </a>
@@ -140,12 +194,12 @@
                             <td
                             scope="col"
                             >
-                                Semoga Lebih Terampil dan Sukses
+                                <?php echo $row['harapan'] ?>
                             </td>
                             <td
                             scope="col"
                             >
-                                Tingkatkan Soft Skill
+                                <?php echo $row['saran_masukan'] ?>
                             </td>
                             <td
                             scope="col"
@@ -156,18 +210,68 @@
                                         class="btn btn-delete p-0" 
                                         data-bs-toggle="modal" 
                                         data-bs-target="#deleteModal" 
-                                        data-task-id="<?php echo $row['id']; ?>"
+                                        data-id="<?php echo $row['id']; ?>"
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7h16m-10 4v6m4-6v6M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2l1-12M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/></svg>
                                     </a>
                                 </div>
                             </td>
                         </tr>
+                        <?php } } else {?>
+                        <tr class="data rounded">
+                            <td colspan="8" class="text-center">Tidak ada Data Penilaian.</td>
+                        </tr>
+                        <?php } ?>
                     </table>
                 </div>
+                <!-- Pagination -->
+                <nav aria-label="Page navigation" class="d-flex justify-content-center">
+                    <ul class="pagination">
+                        <?php if($current_page > 1): ?>
+                            <li class="page-item"><a class="page-link" href="?page=<?php echo $current_page - 1; ?>">Previous</a></li>
+                        <?php else: ?>
+                            <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+                        <?php endif; ?>
+
+                        <?php for($i = 1; $i <= $total_pages; $i++): ?>
+                            <li class="page-item <?php echo $i == $current_page ? 'active' : ''; ?>">
+                                <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                            </li>
+                        <?php endfor; ?>
+
+                        <?php if($current_page < $total_pages): ?>
+                            <li class="page-item"><a class="page-link" href="?page=<?php echo $current_page + 1; ?>">Next</a></li>
+                        <?php else: ?>
+                            <li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
+                        <?php endif; ?>
+                    </ul>
+                </nav>
             </div>
         </div>
     </main>
+
+    <!-- Ambil Data Detail Nilai -->
+    <?php
+    if (isset($_GET['detail_id'])) {
+        $id = $_GET['detail_id'];
+        $sql_detail = mysqli_query($koneksi, "SELECT * FROM tb_penilaianstakeholder WHERE id = '$id'");
+        if ($sql_detail && mysqli_num_rows($sql_detail) > 0) {
+            $data_detail = mysqli_fetch_assoc($sql_detail);
+            $total_nilai = $data_detail['pertanyaan_1'] + $data_detail['pertanyaan_2'] + $data_detail['pertanyaan_3'] + $data_detail['pertanyaan_4'] + $data_detail['pertanyaan_5'] + $data_detail['pertanyaan_6'] + $data_detail['pertanyaan_7'];
+            $rata_rata = round($total_nilai / 7, 2);
+            $show_modal = true;
+        }
+    }
+    ?>
+    <?php if (isset($show_modal)): ?>
+    <script>
+        window.addEventListener('load', function () {
+            const modal = new bootstrap.Modal(document.getElementById('detailModal'));
+            modal.show();
+        });
+    </script>
+    <?php endif; ?>
+
 
     <!-- Modal Detail Nilai -->
     <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
@@ -180,26 +284,43 @@
                 <div class="modal-body">
                     <div class="d-flex flex-column gap-2">
                         <label for="pertanyaan1">Pertanyaan 1</label>
-                        <input type="text" name="pertanyaan1" value="Kurang Baik" class="form-control" disabled>
+                        <input type="text" name="pertanyaan1" value="<?= $data_detail['pertanyaan_1'] ?>" class="form-control" disabled>
                         <label for="pertanyaan2">Pertanyaan 2</label>
-                        <input type="text" name="pertanyaan2" value="Kurang Baik" class="form-control" disabled>
+                        <input type="text" name="pertanyaan2" value="<?= $data_detail['pertanyaan_2'] ?>" class="form-control" disabled>
                         <label for="pertanyaan3">Pertanyaan 3</label>
-                        <input type="text" name="pertanyaan3" value="Kurang Baik" class="form-control" disabled>
+                        <input type="text" name="pertanyaan3" value="<?= $data_detail['pertanyaan_3'] ?>" class="form-control" disabled>
                         <label for="pertanyaan4">Pertanyaan 4</label>
-                        <input type="text" name="pertanyaan4" value="Kurang Baik" class="form-control" disabled>
+                        <input type="text" name="pertanyaan4" value="<?= $data_detail['pertanyaan_4'] ?>" class="form-control" disabled>
                         <label for="pertanyaan5">Pertanyaan 5</label>
-                        <input type="text" name="pertanyaan5" value="Cukup" class="form-control" disabled>
+                        <input type="text" name="pertanyaan5" value="<?= $data_detail['pertanyaan_5'] ?>" class="form-control" disabled>
                         <label for="pertanyaan6">Pertanyaan 6</label>
-                        <input type="text" name="pertanyaan6" value="Kurang Baik" class="form-control" disabled>
+                        <input type="text" name="pertanyaan6" value="<?= $data_detail['pertanyaan_6'] ?>" class="form-control" disabled>
                         <label for="pertanyaan7">Pertanyaan 7</label>
-                        <input type="text" name="pertanyaan7" value="Baik" class="form-control" disabled>
+                        <input type="text" name="pertanyaan7" value="<?= $data_detail['pertanyaan_7'] ?>" class="form-control" disabled>
                         <label for="rata2nilai">Rata-Rata Nilai</label>
-                        <input type="text" name="rata2nilai" value="1.2" class="form-control" disabled>
+                        <input type="text" name="rata2nilai" value="<?= $rata_rata ?>" class="form-control" disabled>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Hapus URL Detail Nilai -->
+    <script>
+        const modalEl = document.getElementById('detailModal');
+
+        if (modalEl) {
+            modalEl.addEventListener('hidden.bs.modal', function () {
+                // Hapus parameter dari URL
+                const url = new URL(window.location.href);
+                url.searchParams.delete('detail_id');
+                url.searchParams.delete('startDate');
+                url.searchParams.delete('endDate');
+                url.searchParams.delete('tahun_lulus');
+                window.history.replaceState({}, document.title, url.pathname + url.search);
+            });
+        }
+    </script>
 
     <!-- Modal Hapus Data -->
     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -236,6 +357,52 @@
             </div>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Penanganan Hapus Data -->
+    <script>
+        let deleteId = null;
+
+        const deleteModal = document.getElementById('deleteModal');
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            deleteId = button.getAttribute('data-id');
+        });
+
+        // Tangani klik tombol "Hapus"
+        document.querySelector('#deleteModal .btn-danger').addEventListener('click', function () {
+            if (deleteId) {
+                window.location.href = `proses/hapus-penilaian.php?id=${deleteId}`;
+            }
+        });
+    </script>
+    
+    <!-- Popup Sukses/Gagal Menghapus Data -->
+    <?php if (isset($_GET['hapus'])): ?>
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <div id="hapusToast" class="toast align-items-center text-white <?= $_GET['hapus'] == 'success' ? 'bg-success' : 'bg-danger' ?>" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <?= $_GET['hapus'] == 'success' ? 'Data berhasil dihapus.' : 'Gagal menghapus data.' ?>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const hapusToastEl = document.getElementById('hapusToast');
+            const hapusToast = new bootstrap.Toast(hapusToastEl);
+            hapusToast.show();
+
+            // Hapus parameter 'hapus' dari URL setelah toast ditampilkan
+            setTimeout(function () {
+                const url = new URL(window.location);
+                url.searchParams.delete('hapus');
+                window.history.replaceState({}, '', url);
+            }, 1500);
+        </script>
+    <?php endif; ?>
 
     <!-- Modal Filter -->
     <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
@@ -249,7 +416,7 @@
             <form id="filterForm" method="GET" action="">
               <!-- Rentang Tanggal -->
               <div class="mb-3">
-                <label for="startDate" class="form-label">Rentang Tanggal</label>
+                <label for="" class="form-label">Rentang Tanggal</label>
                 <div class="d-flex align-items-center gap-2">
                   <input type="date" class="form-control" id="startDate" name="startDate" value="<?php echo htmlspecialchars($startDate); ?>">
                   <span>-</span>
@@ -260,12 +427,12 @@
               <!-- Tahun Lulus -->
               <div class="mb-3">
                 <label for="tahun_lulus" class="form-label">Tahun Lulusan</label>
-                <input type="text" name="tahun_lulus" class="form-control">
+                <input type="text" name="tahun_lulus" class="form-control" value="<?php echo htmlspecialchars($tahun_lulus); ?>">
               </div>
 
               <!-- Tombol filter -->
               <div class="d-flex gap-2">
-                  <button type="button" class="btn border w-100" id="resetFilter">Reset Filter</button>
+                <button type="button" class="btn border w-100" id="resetFilter">Reset Filter</button>
                 <button type="submit" class="btn btn-primary w-100">Terapkan Filter</button>
               </div>
             </form>
@@ -287,11 +454,11 @@
             <form id="filterForm" method="GET" action="">
               <!-- Rentang Tanggal -->
               <div class="mb-3">
-                <label for="startDate" class="form-label">Rentang Tanggal</label>
+                <label for="" class="form-label">Rentang Tanggal</label>
                 <div class="d-flex align-items-center gap-2">
-                  <input type="date" class="form-control" id="startDate" name="startDate" value="<?php echo htmlspecialchars($startDate); ?>">
+                  <input type="date" class="form-control" id="startDateGenerate" name="startDateGenerate" value="<?php echo htmlspecialchars($startDateGenerate); ?>">
                   <span>-</span>
-                  <input type="date" class="form-control" id="endDate" name="endDate" value="<?php echo htmlspecialchars($endDate); ?>">
+                  <input type="date" class="form-control" id="endDateGenerate" name="endDateGenerate" value="<?php echo htmlspecialchars($endDateGenerate); ?>">
                 </div>
               </div>
 
@@ -303,8 +470,8 @@
 
               <!-- Tombol filter -->
               <div class="d-flex gap-2">
-                  <button type="button" class="btn border w-100" id="resetFilter">Reset Filter</button>
-                <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#formatModal">Lanjut</button>
+                <button type="button" class="btn border w-100" id="resetFilterGenerate">Reset Filter</button>
+                <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#formatModal" data-bs-dismiss="modal">Lanjut</button>
               </div>
             </form>
           </div>
@@ -320,36 +487,117 @@
                     <h5 class="modal-title" id="formatModalLabel">Format Generate Laporan</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body text-center">
-
-                    <!-- Ikon peringatan -->
-                    <form id="generate-format">
-                        <div class="d-flex justify-content-center gap-3">
-                            <label for="format-pdf" class="d-flex align-items-center gap-4">
-                                <input type="radio" id="format-pdf" name="format" value="PDF" class="form-check-input mr-0" required>
-                                <div class="d-flex align-items-center">
-                                    <img src="../assets/img/icon/PDF.png" alt="PDF" class="me-2" style="width: 40px;">
-                                    <span>PDF</span>
-                                </div>
-                            </label>
-                            <label for="format-excel" class="d-flex align-items-center gap-4">
-                                <input type="radio" id="format-excel" name="format" value="Excel" class="form-check-input mr-0" required>
-                                <div class="d-flex align-items-center">
-                                    <img src="../assets/img/icon/CSV.png" alt="Excel" class="me-2" style="width: 40px;">
-                                    <span>Excel</span>
-                                </div>
-                            </label>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-primary w-100">Generate</button>
-                </div>
+                <form id="generate-format" method="post" action="proses/generate-laporan.php">
+                    <input type="hidden" name="startDateGenerate" id="startDateGenerateHidden">
+                    <input type="hidden" name="endDateGenerate" id="endDateGenerateHidden">
+                    <input type="hidden" name="tglPenilaian" id="tglPenilaianHidden">
+                    <div class="modal-body text-center">
+                        <!-- Ikon peringatan -->
+                            <div class="d-flex justify-content-center gap-3">
+                                <label for="format-pdf" class="d-flex align-items-center gap-4">
+                                    <input type="radio" id="format-pdf" name="format" value="PDF" class="form-check-input mr-0" required>
+                                    <div class="d-flex align-items-center">
+                                        <img src="../assets/img/icon/PDF.png" alt="PDF" class="me-2" style="width: 40px;">
+                                        <span>PDF</span>
+                                    </div>
+                                </label>
+                                <label for="format-excel" class="d-flex align-items-center gap-4">
+                                    <input type="radio" id="format-excel" name="format" value="Excel" class="form-check-input mr-0" required>
+                                    <div class="d-flex align-items-center">
+                                        <img src="../assets/img/icon/CSV.png" alt="Excel" class="me-2" style="width: 40px;">
+                                        <span>Excel</span>
+                                    </div>
+                                </label>
+                            </div>
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="submit" class="btn btn-primary w-100">Generate</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+    
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Pengecekan Kondisi Inputan Search Kosong -->
+    <script>
+            document.getElementById('searchForm').addEventListener('submit', function(e) {
+                const input = this.querySelector('input[name="search"]');
+                if (input.value.trim() === '') {
+                    e.preventDefault(); // batalkan submit default
+                    window.location.href = window.location.pathname; // arahkan ulang tanpa ?search
+                }
+            });
+    
+            // Fungsi untuk mereset filter
+            document.addEventListener('DOMContentLoaded', function() {
+                document.getElementById('resetFilter').addEventListener('click', function() {
+                    // Bersihkan nilai dari input filter
+                    document.getElementById('startDate').value = '';
+                    document.getElementById('endDate').value = '';
+                    document.querySelector('input[name="tahun_lulus"]').value = '';
+                    
+                    window.location.href = window.location.pathname.split('?')[0];
+                });
+                document.getElementById('resetFilterGenerate').addEventListener('click', function() {
+                    // Bersihkan nilai dari input filter
+                    document.getElementById('startDateGenerate').value = '';
+                    document.getElementById('endDateGenerate').value = '';
+                    document.querySelector('input[name="tglPenilaian"]').value = '';
+                    
+                    window.location.href = window.location.pathname.split('?')[0];
+                });
+
+                // Refresh halaman setelah modal format ditutup
+                const formatModal = document.getElementById('formatModal');
+                formatModal.addEventListener('hidden.bs.modal', function () {
+                    // Membersihkan parameter URL
+                    const url = new URL(window.location);
+                    url.searchParams.delete('status');
+                    url.searchParams.delete('message');
+                    window.history.replaceState({}, '', url);
+                    
+                    // Refresh halaman
+                    window.location.reload();
+                });
+            });
+
+            document.getElementById('generateModal').addEventListener('hidden.bs.modal', function () {
+                // Salin data dari form filter ke input tersembunyi
+                document.getElementById('startDateGenerateHidden').value = document.getElementById('startDateGenerate').value;
+                document.getElementById('endDateGenerateHidden').value = document.getElementById('endDateGenerate').value;
+                document.getElementById('tglPenilaianHidden').value = document.querySelector('input[name="tglPenilaian"]').value;
+            });
+        </script>
+        
+        <!-- Toast Berhasil/Gagal Generate Laporan -->
+        <?php if (isset($_GET['status'])): ?>
+            <div class="toast-container position-fixed bottom-0 end-0 p-3">
+                <div id="liveToast" class="toast align-items-center text-white <?= $_GET['status'] == 'success' ? 'bg-success' : 'bg-danger' ?>" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <?= $_GET['status'] == 'success' ? $_GET['message'] : $_GET['message'] ?>
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+            </div>
+            <script>
+                // Menampilkan toast setelah halaman dimuat
+                var toastEl = document.getElementById('liveToast');
+                var toast = new bootstrap.Toast(toastEl);
+                toast.show();
+
+                setTimeout(function () {
+                        const url = new URL(window.location);
+                        url.searchParams.delete('status');
+                        url.searchParams.delete('message');
+                        window.history.replaceState({}, '', url);
+                }, 1500);
+            </script>
+        <?php endif; ?>
+
+
     <!-- Main JS -->
     <script src="./assets/js/script.js"></script>
 </body>

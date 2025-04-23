@@ -50,7 +50,7 @@
                         <span></span>
                         <span></span>
                     </div>
-                    <h6 class="text-white mb-0 dashboard-title ">Data Stakeholder</h6>
+                    <h6 class="text-white mb-0 dashboard-title">Data Stakeholder</h6>
                 </div>
                 <div class="d-flex flex-row align-items-center gap-2">
                     <div class="d-flex flex-column align-items-end text-white user-info">
@@ -71,7 +71,7 @@
                                 </path>
                                 </svg>
                             </div>
-                            <form action="" method="GET" id="searchForm">
+                            <form action="" method="GET" id="searchForm" autocomplete="off">
                                 <input type="search" name="search" placeholder="Cari" 
                                 class="form-control ps-5 py-2 border rounded w-100 w-lg-50 border-dark-subtle" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
                             </form>
@@ -79,7 +79,7 @@
                     </div>
                 </div>
                 <hr>
-                <div style="overflow-x: auto;">
+                <div style="overflow-x: auto;" class="mb-5 mb-lg-3">
                     <table>
                         <tr class="head">
                             <th scope="col">No</th>
@@ -92,8 +92,55 @@
                             <th scope="col">Aksi</th>
                         </tr>
                         
-                        <!-- <tr class="data rounded">
-                            <td class="d-none user_id"><?php echo $row['user_id'];?></td>
+                        <?php
+                            $search = isset($_GET['search']) ? mysqli_real_escape_string($koneksi, $_GET['search']) : '';
+
+                            // Pagination
+                            $per_page = 15;
+                            $current_page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+                            $offset = ($current_page - 1) * $per_page;
+
+                            $query = "SELECT 
+                                        ds.id,
+                                        ds.nama_pengisi,
+                                        ds.perusahaan,
+                                        ds.jabatan,
+                                        ds.email,
+                                        ds.no_hp,
+                                        (
+                                            SELECT COUNT(*) 
+                                            FROM tb_penilaianstakeholder p 
+                                            WHERE p.nama_stakeholder = ds.nama_pengisi
+                                        ) AS total_penilaian 
+                                    FROM 
+                                        tb_datastakeholder ds 
+                                    WHERE 1";
+                            
+                            if (!empty($search)) {
+                                $query .= " AND (
+                                    ds.nama_pengisi LIKE '%$search%' OR
+                                    ds.perusahaan LIKE '%$search%' OR
+                                    ds.jabatan LIKE '%$search%' OR
+                                    ds.email LIKE '%$search%'
+                                )";
+                            }
+                            
+                            $query .= " GROUP BY ds.email ORDER BY ds.id DESC LIMIT $per_page OFFSET $offset";
+                            $result = mysqli_query($koneksi, $query);                            
+                            
+                            $count_query = "SELECT COUNT(*) as total FROM tb_datastakeholder";
+                            $count_result = mysqli_query($koneksi, $count_query);
+                            $count_row = mysqli_fetch_assoc($count_result);
+                            $total_data = $count_row['total'];
+
+                            // Menghitung jumlah halaman
+                            $total_pages = ceil($total_data / $per_page);
+
+                            $no = 1;
+                            if(mysqli_num_rows($result) > 0) {
+                                while($row = mysqli_fetch_assoc($result)) {
+                        ?>
+                        <tr class="data rounded">
                             <td class="d-none id_task"><?php echo $row['id'];?></td>
                             <td scope="col"><?php echo $no++ ?></td>
                             <td
@@ -101,69 +148,32 @@
                             class="text-truncate"
                             style="max-width: 200px"
                             >
-                                <?php echo $row['task_name'] ?>
-                            </td>
-                            <td scope="col" style="max-width: 30px;">
-                                
-                            </td>
-                            <td
-                            scope="col"
-                            class="text-truncate"
-                            style="max-width: 200px"
-                            >
-                                <?php echo $row['description'] ?>
-                            </td>
-                            <td
-                            scope="col"
-                            >
-                                <?php echo $status ?>
-                            </td>
-                            <td
-                            scope="col"
-                            >
-                                <?php echo $row['name'] ?>
-                            </td>
-                            <td
-                            scope="col"
-                            >
-                                <?php echo $row['deadline'] ?>
-                            </td>
-                        </tr> -->
-                        <tr class="data rounded">
-                            <!-- <td class="d-none user_id"><?php echo $row['user_id'];?></td>
-                            <td class="d-none id_task"><?php echo $row['id'];?></td> -->
-                            <td scope="col">1</td>
-                            <td
-                            scope="col"
-                            class="text-truncate"
-                            style="max-width: 200px"
-                            >
-                                Muhammad Akhsan Awaluddin
+                                <?php echo $row['nama_pengisi'] ?>
                             </td>
                             <td scope="col" class="text-truncate" style="max-width: 200px;">
-                                Universitas Negeri Makassar
+                                <?php echo $row['perusahaan'] ?>
                             </td>
                             <td
                             scope="col"
                             class="text-truncate"
                             style="max-width: 200px"
                             >
-                                Dosen
+                                <?php echo $row['jabatan'] ?>
                             </td>
                             <td
                             scope="col"
                             >
-                                akhsannn@gmail.com
+                                <?php echo $row['email'] ?>
                             </td>
                             <td
                             scope="col"
                             >
-                                082131231234
+                                <?php echo $row['no_hp'] ?>
                             </td>
                             <td
                             scope="col"
                             >
-                                5
+                                <?php echo $row['total_penilaian'] ?>
                             </td>
                             <td
                             scope="col"
@@ -171,7 +181,7 @@
                                 <div class="d-flex flex-row gap-2 align-items-center">
                                     <a 
                                         class="btn btn-detail view-detail p-0" 
-                                        aria-label="View Details" href="edit-data-stakeholder.php"
+                                        aria-label="View Details" href="edit-data-stakeholder.php?nama_pengisi=<?php echo $row['nama_pengisi']; ?>"
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><g fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M7 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-1"/><path d="M20.385 6.585a2.1 2.1 0 0 0-2.97-2.97L9 12v3h3zM16 5l3 3"/></g></svg>
                                     </a>
@@ -180,15 +190,42 @@
                                         class="btn btn-delete p-0" 
                                         data-bs-toggle="modal" 
                                         data-bs-target="#deleteModal" 
-                                        data-task-id="<?php echo $row['id']; ?>"
+                                        data-id="<?php echo $row['id']; ?>"
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7h16m-10 4v6m4-6v6M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2l1-12M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/></svg>
                                     </a>
                                 </div>
                             </td>
                         </tr>
+                        <?php } } else {?>
+                        <tr class="data rounded">
+                            <td colspan="8" class="text-center">Tidak ada Data Stakeholder.</td>
+                        </tr>
+                        <?php } ?>
                     </table>
                 </div>
+                <!-- Pagination -->
+                <nav aria-label="Page navigation" class="d-flex justify-content-center">
+                    <ul class="pagination">
+                        <?php if($current_page > 1): ?>
+                            <li class="page-item"><a class="page-link" href="?page=<?php echo $current_page - 1; ?>">Previous</a></li>
+                        <?php else: ?>
+                            <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+                        <?php endif; ?>
+
+                        <?php for($i = 1; $i <= $total_pages; $i++): ?>
+                            <li class="page-item <?php echo $i == $current_page ? 'active' : ''; ?>">
+                                <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                            </li>
+                        <?php endfor; ?>
+
+                        <?php if($current_page < $total_pages): ?>
+                            <li class="page-item"><a class="page-link" href="?page=<?php echo $current_page + 1; ?>">Next</a></li>
+                        <?php else: ?>
+                            <li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
+                        <?php endif; ?>
+                    </ul>
+                </nav>
             </div>
         </div>
     </main>
@@ -230,6 +267,90 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Popup Sukses/Gagal Mengubah Data -->
+    <?php if (isset($_GET['status'])): ?>
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="liveToast" class="toast align-items-center text-white <?= $_GET['status'] == 'success' ? 'bg-success' : 'bg-danger' ?>" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <?= $_GET['status'] == 'success' ? 'Data berhasil diubah.' : 'Gagal mengubah data.' ?>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const toastLive = document.getElementById('liveToast');
+        const toast = new bootstrap.Toast(toastLive);
+        toast.show();
+
+        // Hapus parameter 'toast' dari URL setelah toast ditampilkan
+        setTimeout(function () {
+                const url = new URL(window.location);
+                url.searchParams.delete('toast');
+                window.history.replaceState({}, '', url);
+        }, 1500);
+    </script>
+    <?php endif; ?>
+
+    <!-- Penanganan Hapus Data -->
+    <script>
+        let deleteId = null;
+
+        const deleteModal = document.getElementById('deleteModal');
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            deleteId = button.getAttribute('data-id');
+        });
+
+        // Tangani klik tombol "Hapus"
+        document.querySelector('#deleteModal .btn-danger').addEventListener('click', function () {
+            if (deleteId) {
+                window.location.href = `proses/hapus-stakeholder.php?id=${deleteId}`;
+            }
+        });
+    </script>
+    
+    <!-- Popup Sukses/Gagal Menghapus Data -->
+    <?php if (isset($_GET['hapus'])): ?>
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <div id="hapusToast" class="toast align-items-center text-white <?= $_GET['hapus'] == 'success' ? 'bg-success' : 'bg-danger' ?>" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <?= $_GET['hapus'] == 'success' ? 'Data berhasil dihapus.' : 'Gagal menghapus data.' ?>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const hapusToastEl = document.getElementById('hapusToast');
+            const hapusToast = new bootstrap.Toast(hapusToastEl);
+            hapusToast.show();
+
+            // Hapus parameter 'hapus' dari URL setelah toast ditampilkan
+            setTimeout(function () {
+                const url = new URL(window.location);
+                url.searchParams.delete('hapus');
+                window.history.replaceState({}, '', url);
+            }, 1500);
+        </script>
+    <?php endif; ?>
+
+    <!-- Pengecekan Kondisi Inputan Search Kosong -->
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', function(e) {
+            const input = this.querySelector('input[name="search"]');
+            if (input.value.trim() === '') {
+                e.preventDefault(); // batalkan submit default
+                window.location.href = window.location.pathname; // arahkan ulang tanpa ?search
+            }
+        });
+    </script>
+
     <!-- Main JS -->
     <script src="./assets/js/script.js"></script>
 </body>

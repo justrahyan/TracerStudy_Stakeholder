@@ -10,6 +10,20 @@
       header("location:../login.php");
       exit();
   }
+
+  if (isset($_GET['nama_pengisi'])) {
+        $nama_pengisi = $_GET['nama_pengisi'];
+        $query = mysqli_query($koneksi, "SELECT * FROM tb_datastakeholder WHERE nama_pengisi = '$nama_pengisi'");
+        $row = mysqli_fetch_assoc($query);
+
+        // Hitung total penilaian
+        $queryTotal = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM tb_penilaianstakeholder WHERE nama_stakeholder = '$nama_pengisi'");
+        $dataTotal = mysqli_fetch_assoc($queryTotal);
+        $total_penilaian = $dataTotal['total'];
+    } else {
+        header("Location: data-stakeholder.php");
+        exit();
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -69,25 +83,25 @@
                     </a>
                 </div>
                 <hr>
-                <form action="proses-edit.php" method="POST">
-                    <input type="hidden" name="id" value="<?= $tugas['id']; ?>">
+                <form action="proses/edit-stakeholder.php" method="POST">
+                    <input type="hidden" name="id" value="<?= $row['id']; ?>">
                     <label for="nama" class="fw-medium mb-1">Nama Stakeholder</label>
-                    <input type="text" id="nama" name="nama" class="form-control w-100 mb-2" value="" required>
+                    <input type="text" id="nama" name="nama" class="form-control w-100 mb-2" value="<?= $row['nama_pengisi'];?>" required>
 
                     <label for="perusahaan" class="fw-medium mb-1">Nama Perusahaan/Institusi</label>
-                    <input type="text" id="perusahaan" name="perusahaan" class="form-control w-100 mb-2" value="" required>
+                    <input type="text" id="perusahaan" name="perusahaan" class="form-control w-100 mb-2" value="<?= $row['perusahaan'];?>" required>
 
                     <label for="jabatan" class="fw-medium mb-1">Jabatan</label>
-                    <input type="text" id="jabatan" name="jabatan" class="form-control w-100 mb-2" value="" required>
+                    <input type="text" id="jabatan" name="jabatan" class="form-control w-100 mb-2" value="<?= $row['jabatan'];?>" required>
 
                     <label for="email" class="fw-medium mb-1">Email</label>
-                    <input type="text" id="email" name="email" class="form-control w-100 mb-2" value="" required>
+                    <input type="text" id="email" name="email" class="form-control w-100 mb-2" value="<?= $row['email'];?>" required>
 
                     <label for="no_hp" class="fw-medium mb-1">No Handphone</label>
-                    <input type="text" id="no_hp" name="no_hp" class="form-control w-100 mb-2" value="" required>
+                    <input type="text" id="no_hp" name="no_hp" class="form-control w-100 mb-2" value="<?= $row['no_hp'];?>" required>
 
                     <label for="total_penilaian" class="fw-medium mb-1">Total Penilaian</label>
-                    <input type="text" id="total_penilaian" name="total_penilaian" class="form-control w-100 mb-2" value="" required>
+                    <input type="text" id="total_penilaian" name="total_penilaian" class="form-control w-100 mb-2" value="<?= $total_penilaian ?>" disabled>
 
                     <div class="button-group d-flex flex-column flex-md-row gap-2 gap-md-4 mt-4">
                         <button type="reset" class="bg-white text-dark w-100 p-2 rounded btn border">Batal</button>
