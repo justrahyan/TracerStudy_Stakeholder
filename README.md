@@ -43,7 +43,7 @@ git clone https://github.com/justrahyan/TracerStudy_Stakeholder
 ### 2. Konfigurasi Database
 
 - Buka **phpMyAdmin**.
-- Buat database baru, misalnya `tracerstudy_db`.
+- Buat database baru, bernama `db_pep`.
 - Import file database yang ada di folder `/assets/db/db_pep.sql`.
 
 ### 3. Struktur Tabel
@@ -68,13 +68,13 @@ git clone https://github.com/justrahyan/TracerStudy_Stakeholder
 | nama_stakeholder | VARCHAR   |
 | nama_alumni      | VARCHAR   |
 | tahun_lulus      | VARCHAR   |
-| pertanyaan_1     | TEXT      |
-| pertanyaan_2     | TEXT      |
-| pertanyaan_3     | TEXT      |
-| pertanyaan_4     | TEXT      |
-| pertanyaan_5     | TEXT      |
-| pertanyaan_6     | TEXT      |
-| pertanyaan_7     | TEXT      |
+| pertanyaan_1     | ENUM      |
+| pertanyaan_2     | ENUM      |
+| pertanyaan_3     | ENUM      |
+| pertanyaan_4     | ENUM      |
+| pertanyaan_5     | ENUM      |
+| pertanyaan_6     | ENUM      |
+| pertanyaan_7     | ENUM      |
 | harapan          | TEXT      |
 | masukan          | TEXT      |
 
