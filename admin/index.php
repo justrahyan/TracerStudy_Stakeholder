@@ -10,6 +10,17 @@
       header("location:../login.php");
       exit();
   }
+
+    // Hitung jumlah data di tb_datastakeholder
+    $queryStakeholder = mysqli_query($koneksi, "SELECT COUNT(DISTINCT nama_pengisi) as total FROM tb_datastakeholder");
+    $dataStakeholder = mysqli_fetch_assoc($queryStakeholder);
+    $countStakeholder = $dataStakeholder['total'];
+
+    // Hitung jumlah data di tb_penilaianstakeholder
+    $queryPenilaian = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM tb_penilaianstakeholder");
+    $dataPenilaian = mysqli_fetch_assoc($queryPenilaian);
+    $countPenilaian = $dataPenilaian['total'];
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -67,7 +78,7 @@
                             <p>STAKEHOLDER</p>
                         </div>
                         <div class="count">
-                            <h1 class="fw-bold">2</h1>
+                            <h1 class="fw-bold"><?= $countStakeholder ?></h1>
                         </div>
                     </div>
                     <div class="icon">
@@ -80,7 +91,7 @@
                             <p>PENILAIAN</p>
                         </div>
                         <div class="count">
-                            <h1 class="fw-bold">7</h1>
+                            <h1 class="fw-bold"><?= $countPenilaian ?></h1>
                         </div>
                     </div>
                     <div class="icon">
