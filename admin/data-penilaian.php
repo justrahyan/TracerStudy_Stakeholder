@@ -58,8 +58,8 @@
                 </div>
                 <div class="d-flex flex-row align-items-center gap-2">
                     <div class="d-flex flex-column align-items-end text-white user-info">
-                        <h6 class="mb-0 fw-medium">Admin</h6>
-                        <p class="role mb-0">Admin</p>
+                        <h6 class="mb-0 fw-medium text-capitalize"><?= isset($_SESSION['userweb']) ? $_SESSION['userweb'] : 'Admin'; ?></h6>
+                        <p class="role mb-0"><?= isset($_SESSION['role']) ? $_SESSION['role'] : 'Admin'; ?></p>
                     </div>
                     <svg xmlns="http://www.w3.org/2000/svg" class="d-none d-md-block" width="40" height="40" viewBox="0 0 24 24"><path fill="#ffffff" d="M12 3a9 9 0 0 0-9 9a8.96 8.96 0 0 0 1.773 5.365A5 5 0 0 1 9.5 14h5a5 5 0 0 1 4.727 3.365A8.96 8.96 0 0 0 21 12a9 9 0 0 0-9-9m5.5 16.125V19a3 3 0 0 0-3-3h-5a3 3 0 0 0-3 3v.125A8.96 8.96 0 0 0 12 21c2.072 0 3.979-.7 5.5-1.875M1 12C1 5.925 5.925 1 12 1s11 4.925 11 11a10.98 10.98 0 0 1-3.85 8.36A10.96 10.96 0 0 1 12 23a10.96 10.96 0 0 1-7.15-2.64A10.98 10.98 0 0 1 1 12m11-6a2.5 2.5 0 1 0 0 5a2.5 2.5 0 0 0 0-5M7.5 8.5a4.5 4.5 0 1 1 9 0a4.5 4.5 0 0 1-9 0"/></svg>
                 </div>
@@ -100,7 +100,7 @@
                     <table>
                         <tr class="head">
                             <th scope="col">Tanggal</th>
-                            <th scope="col" style="max-width: 200px;">Nama Stakeholder</th>
+                            <th scope="col">Nama Stakeholder</th>
                             <th scope="col">Alumni (Nama + Tahun Lulusan)</th>
                             <th scope="col">Rata-Rata Nilai</th>
                             <th scope="col">Detail Nilai</th>
@@ -166,11 +166,10 @@
                             <td
                             scope="col"
                             class="text-truncate"
-                            style="max-width: 200px"
                             >
                                 <?php echo $row['nama_stakeholder'] ?>
                             </td>
-                            <td scope="col" class="text-truncate" style="max-width: 200px;">
+                            <td scope="col" class="text-truncate">
                                 <?php echo $row['nama_alumni'] ?> (<?php echo $row['tahun_lulus'] ?>)
                             </td>
                             <td
