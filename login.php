@@ -38,6 +38,34 @@
       </div>
     </div>
 
+    <!-- Popup Gagal Login -->
+    <?php if (isset($_GET['status'])): ?>
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <div id="liveToast" class="toast align-items-center text-white <?= $_GET['status'] == 'success' ? 'bg-success' : 'bg-danger' ?>" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <?= htmlspecialchars($_GET['message']) ?>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var toastEl = document.getElementById('liveToast');
+                var toast = new bootstrap.Toast(toastEl);
+                toast.show();
+
+                setTimeout(function () {
+                    const url = new URL(window.location);
+                    url.searchParams.delete('status');
+                    url.searchParams.delete('message');
+                    window.history.replaceState({}, '', url);
+                }, 1500);
+            });
+        </script>
+    <?php endif; ?>
+
     <?php
     if (isset($_POST['masuk'])) {
         session_start();
@@ -59,9 +87,11 @@
                 header("location:admin/index.php");
             }
         } else {
-            echo "<script>alert('username atau password Anda salah. Silahkan coba lagi!')</script>";
+            header("Location: login.php?status=error&message=" . urlencode('Username atau password salah!'));
+            exit();
         }
     }
     ?>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
