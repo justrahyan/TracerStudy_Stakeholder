@@ -1,15 +1,12 @@
 <?php
 require_once '../../koneksi.php';
 
-// Pastikan tidak ada output sebelum header
 if (ob_get_level()) ob_end_clean();
 
-// Ambil data langsung dari GET parameter
 $startDateGenerate = $_GET['startDateGenerate'] ?? '';
 $endDateGenerate = $_GET['endDateGenerate'] ?? '';
 $tglPenilaian = $_GET['tglPenilaian'] ?? '';
 
-// Query data langsung (tanpa session)
 $query = "SELECT * FROM tb_penilaianstakeholder WHERE 1";
 if (!empty($startDateGenerate) && !empty($endDateGenerate)) {
     $query .= " AND tanggal BETWEEN '$startDateGenerate' AND '$endDateGenerate'";
@@ -22,47 +19,62 @@ $data = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
 require_once('./library/fpdf.php');
 
-$pdf = new FPDF();
-$pdf = new FPDF('P', 'mm', 'A4');
-$pdf->AddPage();
-
-// Set document information
+$pdf = new FPDF('P', 'mm', 'A4'); // Portrait
 $pdf->SetTitle('Laporan Penilaian Stakeholder');
 $pdf->SetAuthor('Sistem Alumni');
 
-// Title
-$pdf->SetFont('Arial', 'B', 16);
-$pdf->Cell(0, 10, 'LAPORAN PENILAIAN STAKEHOLDER', 0, 1, 'C');
-$pdf->SetFont('Arial', '', 12);
-$pdf->Cell(0, 10, $title, 0, 1, 'C');
-$pdf->Ln(10);
+$pdf->SetMargins(15, 20, 15); // Margin atas-kiri-kanan
+$pdf->SetAutoPageBreak(true, 20);
 
-// Table header
-$pdf->SetFont('Arial', 'B', 10);
-$pdf->SetFillColor(200, 220, 255);
-$pdf->Cell(10, 7, 'No', 1, 0, 'C', true);
-$pdf->Cell(50, 7, 'Nama Stakeholder', 1, 0, 'C', true);
-$pdf->Cell(50, 7, 'Nama Alumni', 1, 0, 'C', true);
-$pdf->Cell(30, 7, 'Tanggal', 1, 0, 'C', true);
-$pdf->Cell(30, 7, 'Nilai Rata-rata', 1, 1, 'C', true);
-
-// Table content
-$pdf->SetFont('Arial', '', 9);
 $no = 1;
 foreach ($data as $row) {
-    $total_nilai = $row['pertanyaan_1'] + $row['pertanyaan_2'] + $row['pertanyaan_3'] + 
-                  $row['pertanyaan_4'] + $row['pertanyaan_5'] + $row['pertanyaan_6'] + 
-                  $row['pertanyaan_7'];
+    $pdf->AddPage();
+
+    $pdf->SetFont('Arial', 'B', 14);
+    $pdf->Cell(0, 10, 'LAPORAN PENILAIAN STAKEHOLDER', 0, 1, 'C');
+    $pdf->Ln(5);
+
+    $pdf->SetFont('Arial', '', 11);
+    $pdf->Cell(0, 8, 'No: ' . $no++, 0, 1);
+    $pdf->Cell(0, 8, 'Tanggal: ' . date('d/m/Y', strtotime($row['tanggal'])), 0, 1);
+    $pdf->Cell(0, 8, 'Stakeholder: ' . $row['nama_stakeholder'], 0, 1);
+    $pdf->Cell(0, 8, 'Alumni: ' . $row['nama_alumni'], 0, 1);
+    $pdf->Ln(3);
+
+    $pdf->SetFont('Arial', 'B', 11);
+    $pdf->Cell(0, 8, 'Penilaian:', 0, 1);
+
+    $pdf->SetFont('Arial', '', 11);
+    $nilai = [];
+    $total_nilai = 0;
+    for ($i = 1; $i <= 7; $i++) {
+        $val = $row['pertanyaan_' . $i];
+        $nilai[] = "P$i: $val";
+        $total_nilai += $val;
+    }
+
     $rata_rata = round($total_nilai / 7, 2);
-    
-    $pdf->Cell(10, 6, $no++, 1, 0, 'C');
-    $pdf->Cell(50, 6, $row['nama_stakeholder'], 1, 0, 'L');
-    $pdf->Cell(50, 6, $row['nama_alumni'], 1, 0, 'L');
-    $pdf->Cell(30, 6, date('d/m/Y', strtotime($row['tanggal'])), 1, 0, 'C');
-    $pdf->Cell(30, 6, $rata_rata, 1, 1, 'C');
+    $pdf->MultiCell(0, 8, implode(' | ', $nilai));
+    $pdf->Ln(2);
+
+    $pdf->SetFont('Arial', 'B', 11);
+    $pdf->Cell(0, 8, 'Rata-rata Penilaian:', 0, 1);
+    $pdf->SetFont('Arial', '', 11);
+    $pdf->Cell(0, 8, $rata_rata, 0, 1);
+    $pdf->Ln(2);
+
+    $pdf->SetFont('Arial', 'B', 11);
+    $pdf->Cell(0, 8, 'Harapan:', 0, 1);
+    $pdf->SetFont('Arial', '', 11);
+    $pdf->MultiCell(0, 8, $row['harapan']);
+    $pdf->Ln(2);
+
+    $pdf->SetFont('Arial', 'B', 11);
+    $pdf->Cell(0, 8, 'Saran / Masukan:', 0, 1);
+    $pdf->SetFont('Arial', '', 11);
+    $pdf->MultiCell(0, 8, $row['saran_masukan']);
 }
 
-// Output langsung
-$pdf->Output('D', 'laporan_penilaian_stakeholder_'.date('YmdHis').'.pdf');
+$pdf->Output('D', 'laporan_penilaian_stakeholder_' . date('YmdHis') . '.pdf');
 exit();
 ?>

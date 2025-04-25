@@ -120,7 +120,7 @@
                             $offset = ($current_page - 1) * $per_page;
 
                             
-                            $query = "SELECT * FROM tb_penilaianstakeholder WHERE 1 ORDER BY id DESC";
+                            $query = "SELECT * FROM tb_penilaianstakeholder WHERE 1";
                             
                             if (!empty($startDate) && !empty($endDate)) {
                                 $query .= " AND tanggal BETWEEN '$startDate' AND '$endDate'";
@@ -136,6 +136,8 @@
                                     nama_alumni LIKE '%$search%'
                                 )";
                             }
+
+                            $query .= " ORDER BY id DESC";
 
                             $query_string = http_build_query([
                                 'startDate' => $startDate,

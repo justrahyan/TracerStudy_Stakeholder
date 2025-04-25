@@ -74,13 +74,25 @@ if (empty($data)) {
 // Langsung include file generate
 if ($format === 'PDF') {
     file_put_contents('log.txt', 'Format PDF diproses' . PHP_EOL, FILE_APPEND);
-    $_GET['title'] = $title; // Pass title via GET
+    $_GET['title'] = $title;
+    if (!empty($startDate) && !empty($endDate)) {
+        $_GET['startDateGenerate'] = $startDate;
+        $_GET['endDateGenerate'] = $endDate;
+    } else {
+        $_GET['tglPenilaian'] = $singleDate;
+    }
     require 'generate-pdf.php';
     header("Location: ../data-penilaian.php?status=success&message=PDF%20berhasil%20dihasilkan");
     exit();
 } elseif ($format === 'EXCEL') {
     file_put_contents('log.txt', 'Format Excel diproses' . PHP_EOL, FILE_APPEND);
-    $_GET['title'] = $title; // Pass title via GET
+    $_GET['title'] = $title;
+    if (!empty($startDate) && !empty($endDate)) {
+        $_GET['startDateGenerate'] = $startDate;
+        $_GET['endDateGenerate'] = $endDate;
+    } else {
+        $_GET['tglPenilaian'] = $singleDate;
+    }
     require 'generate-excel.php';
     header("Location: ../data-penilaian.php?status=success&message=Excel%20berhasil%20dihasilkan");
     exit();

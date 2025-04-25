@@ -38,6 +38,8 @@ echo "<tr>
         <th>Pertanyaan 6</th>
         <th>Pertanyaan 7</th>
         <th>Rata-rata</th>
+        <th>Harapan</th>
+        <th>Saran dan Masukan</th>
       </tr>";
 
 $no = 1;
@@ -60,6 +62,8 @@ foreach ($data as $row) {
             <td>".$row['pertanyaan_6']."</td>
             <td>".$row['pertanyaan_7']."</td>
             <td>".$rata_rata."</td>
+            <td>".$row['harapan']."</td>
+            <td>".$row['saran_masukan']."</td>
           </tr>";
     $no++;
 }
