@@ -563,13 +563,222 @@
                 });
             });
 
+            // Validasi Pilih Format Laporan
+            document.addEventListener('DOMContentLoaded', function() {
+                // Ambil referensi ke form format laporan
+                const formatForm = document.getElementById('generate-format');
+                
+                // Tambahkan event listener untuk validasi saat form disubmit
+                formatForm.addEventListener('submit', function(e) {
+                    // Ambil semua radio button dengan name="format"
+                    const formatRadios = document.querySelectorAll('input[name="format"]');
+                    
+                    // Cek apakah salah satu radio button dipilih
+                    let isSelected = false;
+                    formatRadios.forEach(radio => {
+                        if (radio.checked) {
+                            isSelected = true;
+                        }
+                    });
+                    
+                    // Jika tidak ada yang dipilih, tampilkan pesan error
+                    if (!isSelected) {
+                        e.preventDefault(); // Batalkan submit form
+                        
+                        // Hapus pesan error sebelumnya jika ada
+                        removeFormatErrorMessage();
+                        
+                        // Tampilkan pesan error
+                        showFormatErrorMessage("Pilih salah satu format laporan");
+                    }
+                });
+                
+                // Fungsi untuk menampilkan pesan error
+                function showFormatErrorMessage(message) {
+                    // Hapus pesan error yang sudah ada (jika ada)
+                    removeFormatErrorMessage();
+                    
+                    // Buat elemen pesan error
+                    const errorDiv = document.createElement('div');
+                    errorDiv.id = 'format-error';
+                    errorDiv.className = 'alert alert-danger mt-3';
+                    errorDiv.textContent = message;
+                    
+                    // Tambahkan ke modal body
+                    const modalBody = document.querySelector('#formatModal .modal-body');
+                    modalBody.appendChild(errorDiv);
+                }
+                
+                // Fungsi untuk menghapus pesan error
+                function removeFormatErrorMessage() {
+                    const existingError = document.getElementById('format-error');
+                    if (existingError) {
+                        existingError.remove();
+                    }
+                }
+                
+                // Reset pesan error saat modal dibuka
+                const formatModal = document.getElementById('formatModal');
+                formatModal.addEventListener('show.bs.modal', function() {
+                    removeFormatErrorMessage();
+                });
+                
+                // Juga hapus pesan error saat pengguna memilih salah satu format
+                const formatRadios = document.querySelectorAll('input[name="format"]');
+                formatRadios.forEach(radio => {
+                    radio.addEventListener('change', function() {
+                        removeFormatErrorMessage();
+                    });
+                });
+            });
+
+            // Validasi Pilih Tanggal atau Rentang Tanggal
+            document.addEventListener('DOMContentLoaded', function() {
+                // Tombol lanjut di modal generate
+                const lanjutButton = document.querySelector('#generateModal .btn-primary');
+                
+                lanjutButton.addEventListener('click', function(e) {
+                    // Mengambil nilai input
+                    const startDate = document.getElementById('startDateGenerate').value;
+                    const endDate = document.getElementById('endDateGenerate').value;
+                    const singleDate = document.querySelector('input[name="tglPenilaian"]').value;
+                    
+                    // Reset pesan error sebelumnya
+                    removeErrorMessage();
+                    
+                    // Validasi
+                    if (!startDate && !endDate && !singleDate) {
+                        // Jika semua input kosong
+                        e.preventDefault();
+                        showErrorMessage("Pilih rentang tanggal atau tanggal tertentu");
+                        return false;
+                    } else if (singleDate && (startDate || endDate)) {
+                        // Jika memilih tanggal tertentu dan juga rentang tanggal
+                        e.preventDefault();
+                        showErrorMessage("Pilih rentang tanggal ATAU tanggal tertentu, bukan keduanya");
+                        return false;
+                    } else if ((startDate && !endDate) || (!startDate && endDate)) {
+                        // Jika hanya mengisi salah satu dari rentang tanggal
+                        e.preventDefault();
+                        showErrorMessage("Untuk rentang tanggal, harus mengisi tanggal awal dan akhir");
+                        return false;
+                    } else if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
+                        // Jika tanggal awal lebih besar dari tanggal akhir
+                        e.preventDefault();
+                        showErrorMessage("Tanggal awal tidak boleh lebih besar dari tanggal akhir");
+                        return false;
+                    } else {
+                        // Jika valid, salin data ke input tersembunyi
+                        document.getElementById('startDateGenerateHidden').value = startDate;
+                        document.getElementById('endDateGenerateHidden').value = endDate;
+                        document.getElementById('tglPenilaianHidden').value = singleDate;
+                        
+                        // Biarkan proses lanjut ke modal format
+                        return true;
+                    }
+                });
+                
+                // Fungsi untuk menampilkan pesan error
+                function showErrorMessage(message) {
+                    // Hapus pesan error yang sudah ada (jika ada)
+                    removeErrorMessage();
+                    
+                    // Buat elemen pesan error
+                    const errorDiv = document.createElement('div');
+                    errorDiv.id = 'date-filter-error';
+                    errorDiv.className = 'alert alert-danger mt-3';
+                    errorDiv.textContent = message;
+                    
+                    // Tambahkan ke modal body
+                    const modalBody = document.querySelector('#generateModal .modal-body');
+                    modalBody.appendChild(errorDiv);
+                }
+                
+                // Fungsi untuk menghapus pesan error
+                function removeErrorMessage() {
+                    const existingError = document.getElementById('date-filter-error');
+                    if (existingError) {
+                        existingError.remove();
+                    }
+                }
+                
+                // Reset pesan error saat modal dibuka kembali
+                const generateModal = document.getElementById('generateModal');
+                generateModal.addEventListener('show.bs.modal', function() {
+                    removeErrorMessage();
+                });
+                
+                // Hapus event listener default dari tombol lanjut
+                // Ini penting untuk menghindari konflik dengan validasi kita
+                const lanjutBtnElement = document.querySelector('[data-bs-toggle="modal"][data-bs-target="#formatModal"]');
+                if (lanjutBtnElement) {
+                    // Hapus atribut data-bs-toggle dan data-bs-target
+                    lanjutBtnElement.removeAttribute('data-bs-toggle');
+                    lanjutBtnElement.removeAttribute('data-bs-target');
+                    lanjutBtnElement.removeAttribute('data-bs-dismiss');
+                    
+                    // Tambahkan event listener baru
+                    lanjutBtnElement.addEventListener('click', function(e) {
+                        // Ambil nilai input
+                        const startDate = document.getElementById('startDateGenerate').value;
+                        const endDate = document.getElementById('endDateGenerate').value;
+                        const singleDate = document.querySelector('input[name="tglPenilaian"]').value;
+                        
+                        // Lakukan validasi
+                        const isValid = validateDateInputs(startDate, endDate, singleDate);
+                        
+                        if (isValid) {
+                            // Salin nilai ke input tersembunyi
+                            document.getElementById('startDateGenerateHidden').value = startDate;
+                            document.getElementById('endDateGenerateHidden').value = endDate;
+                            document.getElementById('tglPenilaianHidden').value = singleDate;
+                            
+                            // Buka modal format secara manual
+                            const formatModal = new bootstrap.Modal(document.getElementById('formatModal'));
+                            formatModal.show();
+                            
+                            // Tutup modal generate
+                            const generateModal = bootstrap.Modal.getInstance(document.getElementById('generateModal'));
+                            generateModal.hide();
+                        }
+                    });
+                }
+                
+                // Fungsi validasi input tanggal
+                function validateDateInputs(startDate, endDate, singleDate) {
+                    // Reset pesan error sebelumnya
+                    removeErrorMessage();
+                    
+                    // Validasi
+                    if (!startDate && !endDate && !singleDate) {
+                        // Jika semua input kosong
+                        showErrorMessage("Pilih rentang tanggal atau tanggal tertentu");
+                        return false;
+                    } else if (singleDate && (startDate || endDate)) {
+                        // Jika memilih tanggal tertentu dan juga rentang tanggal
+                        showErrorMessage("Pilih rentang tanggal ATAU tanggal tertentu, bukan keduanya");
+                        return false;
+                    } else if ((startDate && !endDate) || (!startDate && endDate)) {
+                        // Jika hanya mengisi salah satu dari rentang tanggal
+                        showErrorMessage("Untuk rentang tanggal, harus mengisi tanggal awal dan akhir");
+                        return false;
+                    } else if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
+                        // Jika tanggal awal lebih besar dari tanggal akhir
+                        showErrorMessage("Tanggal awal tidak boleh lebih besar dari tanggal akhir");
+                        return false;
+                    }
+                    
+                    return true;
+                }
+            });
+
             document.getElementById('generateModal').addEventListener('hidden.bs.modal', function () {
                 // Salin data dari form filter ke input tersembunyi
                 document.getElementById('startDateGenerateHidden').value = document.getElementById('startDateGenerate').value;
                 document.getElementById('endDateGenerateHidden').value = document.getElementById('endDateGenerate').value;
                 document.getElementById('tglPenilaianHidden').value = document.querySelector('input[name="tglPenilaian"]').value;
             });
-        </script>
+        </script>   
         
         <!-- Toast Berhasil/Gagal Generate Laporan -->
         <?php if (isset($_GET['status'])): ?>
